@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-white mb-6">Melhores Jogadores do Mundo</h1>
+    
+    <div class="bg-fifa-filter p-4 rounded-lg shadow-sm border border-gray-700 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div class="flex items-center gap-2 w-full md:w-auto">
+            <label for="countryFilter" class="font-semibold text-gray-300">País:</label>
+            <select id="countryFilter" class="border border-gray-600 rounded px-3 py-2 bg-fifa-navy text-gray-200 focus:outline-none focus:border-fifa-gold focus:ring-1 focus:ring-fifa-gold w-full md:w-48">
+                <option value="All">Todos os Países</option>
+                {% for country in countries %}
+                <option value="{{ country }}">{{ country }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="flex items-center gap-2 w-full md:w-auto">
+            <label for="sortFilter" class="font-semibold text-gray-300">Ordenar por:</label>
+            <select id="sortFilter" class="border border-gray-600 rounded px-3 py-2 bg-fifa-navy text-gray-200 focus:outline-none focus:border-fifa-gold focus:ring-1 focus:ring-fifa-gold w-full md:w-48">
+                <option value="default">Padrão</option>
+                <option value="name">Nome (A-Z)</option>
+                <option value="age_asc">Idade (Mais Novo)</option>
+                <option value="age_desc">Idade (Mais Velho)</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div id="playerGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+    {% for player in players %}
+    <a href="/player/{{ player.id }}" class="player-card block bg-fifa-card rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" data-country="{{ player.country }}" data-name="{{ player.name }}" data-age="{{ player.age }}">
+        <div class="relative h-48 bg-gray-800 overflow-hidden">
+            <img src="{{ player.photo_url }}" alt="{{ player.name }}" class="w-full h-full object-cover object-top">
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3">
+                <p class="text-white font-bold text-lg leading-tight">{{ player.name }}</p>
+            </div>
+            <div class="absolute top-2 right-2 bg-fifa-gold text-fifa-dark text-xs font-bold px-2 py-1 rounded shadow">
+                {{ player.age }} anos
+            </div>
+        </div>
+        <div class="p-3 border-t-4 border-fifa-gold">
+            <div class="flex items-center gap-2 text-sm text-gray-300 mb-1">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                {{ player.country }}
+            </div>
+            <div class="text-sm text-gray-400 font-semibold truncate">{{ player.club }}</div>
+            <div class="text-xs text-gray-500 mt-2">{{ player.position }}</div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const countryFilter = document.getElementById('countryFilter');
+        const sortFilter = document.getElementById('sortFilter');
+        const playerGrid = document.getElementById('playerGrid');
+        const cards = Array.from(playerGrid.querySelectorAll('.player-card'));
+
+        function applyFilters() {
+            const country = countryFilter.value;
+            const sort = sortFilter.value;
+
+            // Filter
+            let filteredCards = cards.filter(card => {
+                const cardCountry = card.dataset.country;
+                return country === 'All' || cardCountry === country;
+            });
+
+            // Sort
+            filteredCards.sort((a, b) => {
+                if (sort === 'name') {
+                    return a.dataset.name.localeCompare(b.dataset.name);
+                } else if (sort === 'age_asc') {
+                    return parseInt(a.dataset.age) - parseInt(b.dataset.age);
+                } else if (sort === 'age_desc') {
+                    return parseInt(b.dataset.age) - parseInt(a.dataset.age);
+                }
+                return 0; // default
+            });
+
+            // Update DOM
+            playerGrid.innerHTML = '';
+            filteredCards.forEach(card => playerGrid.appendChild(card));
+        }
+
+        countryFilter.addEventListener('change', applyFilters);
+        sortFilter.addEventListener('change', applyFilters);
+    });
+</script>
+{% endblock %}

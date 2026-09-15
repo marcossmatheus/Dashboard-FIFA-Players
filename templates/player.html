@@ -1,0 +1,327 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mb-6">
+    <a href="/" class="text-gray-400 hover:text-fifa-gold font-semibold flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        Voltar para os Jogadores
+    </a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Player Info Sidebar -->
+    <div class="lg:col-span-1">
+        <div class="bg-fifa-card rounded-xl shadow-lg overflow-hidden border-t-8 border-fifa-gold">
+            <div class="h-80 overflow-hidden relative bg-gray-100">
+                <img src="{{ player.photo_url }}" alt="{{ player.name }}" class="w-full h-full object-cover object-top">
+                <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-4">
+                    <h2 class="text-3xl font-bold text-white">{{ player.name }}</h2>
+                    <p class="text-fifa-gold font-semibold text-lg">{{ player.country }}</p>
+                </div>
+            </div>
+            
+            <div class="p-6 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-fifa-filter p-3 rounded-lg border border-gray-700">
+                        <span class="block text-xs text-gray-400 uppercase font-semibold">Idade</span>
+                        <span class="text-lg font-bold text-gray-100">{{ player.age }}</span>
+                    </div>
+                    <div class="bg-fifa-filter p-3 rounded-lg border border-gray-700">
+                        <span class="block text-xs text-gray-400 uppercase font-semibold">Posição</span>
+                        <span class="text-lg font-bold text-gray-100">{{ player.position }}</span>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="block text-xs text-gray-400 uppercase font-semibold mb-1">Clube Atual</span>
+                    <div class="flex items-center gap-2 font-semibold text-gray-100">
+                        <svg class="w-5 h-5 text-fifa-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        {{ player.club }}
+                    </div>
+                </div>
+                
+                <hr class="border-gray-700">
+
+                <div>
+                    <span class="block text-xs text-gray-400 uppercase font-semibold mb-2">Copas do Mundo Disputadas</span>
+                    <div class="flex flex-wrap gap-2">
+                        {% for wc in player.world_cups %}
+                        <span class="bg-fifa-gold text-fifa-dark text-xs font-bold px-2 py-1 rounded">{{ wc }}</span>
+                        {% else %}
+                        <span class="text-sm text-gray-500 italic">Nenhuma</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div>
+                    <span class="block text-xs text-gray-400 uppercase font-semibold mb-2">Convocações Recentes</span>
+                    <ul class="text-sm text-gray-300 list-disc list-inside space-y-1">
+                        {% for callup in player.recent_callups %}
+                        <li>{{ callup }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="lg:col-span-2 space-y-8">
+        
+        <!-- Performance Radar -->
+        <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+            <h3 class="text-2xl font-bold text-slate-900 mb-6">Métricas de Desempenho</h3>
+            <div class="relative h-96 w-full flex justify-center">
+                <canvas id="radarChart"></canvas>
+            </div>
+        </div>
+
+        <!-- 2026 Season Stats -->
+        {% if player.stats_2026 %}
+        <div class="bg-fifa-card rounded-xl shadow-lg p-6 border border-gray-700">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-1 h-8 bg-fifa-gold rounded-full"></div>
+                <h3 class="text-2xl font-bold text-gray-100">Desempenho Temporada 2026</h3>
+                <span class="ml-auto text-xs font-bold bg-fifa-gold text-fifa-dark px-3 py-1 rounded-full uppercase tracking-wider">2026</span>
+            </div>
+
+            <!-- Primary stats row -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                <div class="bg-gradient-to-br from-fifa-filter to-gray-800 rounded-xl p-4 border border-gray-700 text-center hover:border-fifa-gold transition-colors group">
+                    <div class="text-3xl font-black text-fifa-gold group-hover:scale-110 transition-transform inline-block">{{ player.stats_2026.matches }}</div>
+                    <div class="text-xs text-gray-400 uppercase font-semibold mt-1 tracking-wider">Partidas</div>
+                </div>
+                <div class="bg-gradient-to-br from-fifa-filter to-gray-800 rounded-xl p-4 border border-gray-700 text-center hover:border-green-500 transition-colors group">
+                    <div class="text-3xl font-black text-green-400 group-hover:scale-110 transition-transform inline-block">{{ player.stats_2026.goals }}</div>
+                    <div class="text-xs text-gray-400 uppercase font-semibold mt-1 tracking-wider">Gols</div>
+                </div>
+                <div class="bg-gradient-to-br from-fifa-filter to-gray-800 rounded-xl p-4 border border-gray-700 text-center hover:border-blue-400 transition-colors group">
+                    <div class="text-3xl font-black text-blue-400 group-hover:scale-110 transition-transform inline-block">{{ player.stats_2026.assists }}</div>
+                    <div class="text-xs text-gray-400 uppercase font-semibold mt-1 tracking-wider">Assistências</div>
+                </div>
+                <div class="bg-gradient-to-br from-fifa-filter to-gray-800 rounded-xl p-4 border border-gray-700 text-center hover:border-purple-400 transition-colors group">
+                    <div class="text-3xl font-black text-purple-400 group-hover:scale-110 transition-transform inline-block">{{ player.stats_2026.minutes_played }}</div>
+                    <div class="text-xs text-gray-400 uppercase font-semibold mt-1 tracking-wider">Minutos</div>
+                </div>
+            </div>
+
+            <!-- Rating bar -->
+            <div class="bg-fifa-filter rounded-xl p-4 border border-gray-700 mb-4">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm text-gray-400 uppercase font-semibold tracking-wider">Aval. Média</span>
+                    <span class="text-2xl font-black 
+                        {% if player.stats_2026.avg_rating >= 8.0 %}text-green-400
+                        {% elif player.stats_2026.avg_rating >= 7.5 %}text-yellow-400
+                        {% else %}text-orange-400{% endif %}">
+                        {{ player.stats_2026.avg_rating }}
+                    </span>
+                </div>
+                <div class="w-full bg-gray-700 rounded-full h-2.5">
+                    <div class="h-2.5 rounded-full transition-all duration-1000
+                        {% if player.stats_2026.avg_rating >= 8.0 %}bg-gradient-to-r from-green-500 to-green-300
+                        {% elif player.stats_2026.avg_rating >= 7.5 %}bg-gradient-to-r from-yellow-500 to-yellow-300
+                        {% else %}bg-gradient-to-r from-orange-500 to-orange-300{% endif %}"
+                        style="width: {{ ((player.stats_2026.avg_rating - 5) / 5 * 100) | round }}%"
+                        id="ratingBar">
+                    </div>
+                </div>
+                <div class="flex justify-between text-xs text-gray-600 mt-1">
+                    <span>5.0</span><span>10.0</span>
+                </div>
+            </div>
+
+            <!-- Secondary stats -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {% if player.stats_2026.key_passes is defined %}
+                <div class="flex items-center gap-3 bg-fifa-filter rounded-lg p-3 border border-gray-700">
+                    <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                    </div>
+                    <div>
+                        <div class="font-bold text-gray-100">{{ player.stats_2026.key_passes }}</div>
+                        <div class="text-xs text-gray-500">Passes Chave</div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if player.stats_2026.successful_dribbles is defined %}
+                <div class="flex items-center gap-3 bg-fifa-filter rounded-lg p-3 border border-gray-700">
+                    <div class="w-8 h-8 rounded-full bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <div>
+                        <div class="font-bold text-gray-100">{{ player.stats_2026.successful_dribbles }}</div>
+                        <div class="text-xs text-gray-500">Dribles</div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if player.stats_2026.tackles is defined %}
+                <div class="flex items-center gap-3 bg-fifa-filter rounded-lg p-3 border border-gray-700">
+                    <div class="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.618 5.984A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <div>
+                        <div class="font-bold text-gray-100">{{ player.stats_2026.tackles }}</div>
+                        <div class="text-xs text-gray-500">Desarmes</div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if player.stats_2026.clean_sheets is defined %}
+                <div class="flex items-center gap-3 bg-fifa-filter rounded-lg p-3 border border-gray-700">
+                    <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <div class="font-bold text-gray-100">{{ player.stats_2026.clean_sheets }}</div>
+                        <div class="text-xs text-gray-500">Sem Sofrer Gols</div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if player.stats_2026.saves is defined %}
+                <div class="flex items-center gap-3 bg-fifa-filter rounded-lg p-3 border border-gray-700">
+                    <div class="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"></path></svg>
+                    </div>
+                    <div>
+                        <div class="font-bold text-gray-100">{{ player.stats_2026.saves }}</div>
+                        <div class="text-xs text-gray-500">Defesas</div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if player.stats_2026.interceptions is defined %}
+                <div class="flex items-center gap-3 bg-fifa-filter rounded-lg p-3 border border-gray-700">
+                    <div class="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                    </div>
+                    <div>
+                        <div class="font-bold text-gray-100">{{ player.stats_2026.interceptions }}</div>
+                        <div class="text-xs text-gray-500">Interceptações</div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if player.stats_2026.chances_created is defined %}
+                <div class="flex items-center gap-3 bg-fifa-filter rounded-lg p-3 border border-gray-700">
+                    <div class="w-8 h-8 rounded-full bg-pink-500/20 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
+                    </div>
+                    <div>
+                        <div class="font-bold text-gray-100">{{ player.stats_2026.chances_created }}</div>
+                        <div class="text-xs text-gray-500">Chances Criadas</div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Últimas Notícias Section -->
+        <div class="bg-fifa-card rounded-xl shadow-lg p-6 border border-gray-700" id="newsSection">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-1 h-8 bg-red-500 rounded-full"></div>
+                <h3 class="text-2xl font-bold text-gray-100">Últimas Notícias</h3>
+                <span class="ml-auto flex items-center gap-1.5 text-xs text-red-400 font-semibold">
+                    <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                    AO VIVO
+                </span>
+            </div>
+
+            <!-- Skeleton Loader -->
+            <div id="newsSkeleton" class="space-y-4">
+                {% for _ in range(3) %}
+                <div class="bg-fifa-filter rounded-xl p-4 border border-gray-700 animate-pulse">
+                    <div class="flex gap-3">
+                        <div class="flex-1 space-y-2">
+                            <div class="h-3 bg-gray-600 rounded w-1/4"></div>
+                            <div class="h-4 bg-gray-600 rounded w-3/4"></div>
+                            <div class="h-3 bg-gray-700 rounded w-full"></div>
+                            <div class="h-3 bg-gray-700 rounded w-2/3"></div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- News Cards Container -->
+            <div id="newsContainer" class="space-y-4 hidden"></div>
+
+            <!-- No News Fallback -->
+            <div id="newsEmpty" class="hidden text-center py-8">
+                <svg class="w-12 h-12 text-gray-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                <p class="text-gray-500 text-sm">Nenhuma notícia recente encontrada para este jogador.</p>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Pass player data to JS -->
+<script>
+    const currentPlayer = {
+        name: "{{ player.name }}",
+        id: "{{ player.id }}",
+        stats: {{ player.stats | tojson }}
+    };
+</script>
+
+<script>
+// =========================================================
+// NEWS LOADER
+// =========================================================
+(function() {
+    const playerId = currentPlayer.id;
+    const skeleton = document.getElementById('newsSkeleton');
+    const container = document.getElementById('newsContainer');
+    const empty = document.getElementById('newsEmpty');
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '';
+        try {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        } catch(e) { return dateStr; }
+    }
+
+    function createNewsCard(article) {
+        return `
+        <a href="${article.link}" target="_blank" rel="noopener noreferrer"
+           class="group flex flex-col gap-2 bg-fifa-filter rounded-xl p-4 border border-gray-700 hover:border-fifa-gold hover:bg-gray-800/60 transition-all duration-200 cursor-pointer">
+            <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-bold text-fifa-gold bg-fifa-gold/10 px-2 py-0.5 rounded-full uppercase tracking-wider truncate max-w-[60%]">
+                    ${article.source || 'News'}
+                </span>
+                <span class="text-xs text-gray-500 flex-shrink-0">${formatDate(article.date)}</span>
+            </div>
+            <h4 class="font-bold text-gray-100 text-sm leading-snug group-hover:text-fifa-gold transition-colors line-clamp-2">
+                ${article.title}
+            </h4>
+            ${article.preview ? `<p class="text-xs text-gray-400 leading-relaxed line-clamp-2">${article.preview}</p>` : ''}
+            <div class="flex items-center gap-1 text-xs text-gray-500 group-hover:text-fifa-gold transition-colors mt-1">
+                <span>Ler artigo completo</span>
+                <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                </svg>
+            </div>
+        </a>`;
+    }
+
+    fetch(`/api/player/${playerId}/news`)
+        .then(r => r.json())
+        .then(data => {
+            skeleton.classList.add('hidden');
+            if (!data.news || data.news.length === 0) {
+                empty.classList.remove('hidden');
+                return;
+            }
+            container.innerHTML = data.news.map(createNewsCard).join('');
+            container.classList.remove('hidden');
+        })
+        .catch(() => {
+            skeleton.classList.add('hidden');
+            empty.classList.remove('hidden');
+        });
+})();
+</script>
+{% endblock %}
