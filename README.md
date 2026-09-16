@@ -4,14 +4,14 @@
 
 Uma aplicação web construída em **Python (Flask)** para exibir estatísticas, perfis detalhados e as últimas notícias de jogadores de futebol.
 
-## 🚀 Funcionalidades
+## Funcionalidades
 
 - **Dashboard Principal**: Lista os jogadores disponíveis, permitindo filtros por país e ordenação (idade, nome).
 - **Perfil do Jogador**: Exibe os atributos do jogador, clube, idade e estatísticas detalhadas da temporada de 2026.
 - **Notícias em Tempo Real**: Integração com o Google News (via RSS) para buscar as últimas notícias sobre o jogador automaticamente.
 - **API**: Endpoints em JSON disponíveis para consumo dinâmico das informações no front-end.
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 - `app.py`: O servidor Flask principal que gerencia as rotas e a lógica da aplicação.
 - `data/players.json`: Banco de dados estático contendo as informações de todos os jogadores.
@@ -23,7 +23,7 @@ Uma aplicação web construída em **Python (Flask)** para exibir estatísticas,
 Siga os passos abaixo para executar a aplicação na sua máquina:
 
 ### 1. Pré-requisitos
-Certifique-se de ter o [Python 3](https://www.python.org/downloads/) instalado.
+Certifique-se de ter o [Python 3] instalado.
 
 ### 2. Entre na pasta do projeto
 No seu terminal, navegue até a raiz do projeto (onde está o arquivo `app.py`).
@@ -55,5 +55,5 @@ python app.py
 
 A aplicação estará disponível no seu navegador no endereço: [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
-## 🌐 Deploy (Nuvem)
+## Deploy (Nuvem)
 O projeto já conta com o `gunicorn` em `requirements.txt`, pronto para ser hospedado em plataformas modernas como Render, Heroku ou Railway de forma nativa.
