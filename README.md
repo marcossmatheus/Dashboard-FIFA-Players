@@ -1,4 +1,4 @@
-# FIFA Player Stats App
+# FIFA Players Stats App
 
 **Aplicação rodando ao vivo:** [https://fifa-app-vtln.onrender.com](https://fifa-app-vtln.onrender.com)
 
@@ -18,7 +18,7 @@ Uma aplicação web construída em **Python (Flask)** para exibir estatísticas,
 - `scripts/`: Scripts utilitários em Python (`data_generator.py` e `add_stats_2026.py`) usados para gerar e enriquecer a base de dados (`players.json`).
 - `templates/` & `static/`: Arquivos front-end (HTML, CSS e JavaScript).
 
-## 🛠️ Como rodar o projeto localmente
+## Como rodar o projeto localmente
 
 Siga os passos abaixo para executar a aplicação na sua máquina:
 
