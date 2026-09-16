@@ -53,7 +53,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-A aplicação estará disponível no seu navegador no endereço: [http://127.0.0.1:5000](http://127.0.0.1:5000)
+A aplicação estará disponível no seu navegador no endereço: [http://127.0.0.1:5001](http://127.0.0.1:5001)
 
 ## Deploy (Nuvem)
 O projeto já conta com o `gunicorn` em `requirements.txt`, pronto para ser hospedado em plataformas modernas como Render, Heroku ou Railway de forma nativa.
